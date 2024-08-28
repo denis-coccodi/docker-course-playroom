@@ -1,0 +1,57 @@
+# automatically removed when stopped, and detached (command line still usable once a container is run)
+# a network that includes all of the declared containers is automatically created by docker compose
+# "docker-compose up -d" starts this file in detached mode
+# "docker-compose down" removes everything created by this file except the volumes adding "-v" removes the volumes as well
+version: "3.8"
+services:
+  mongodb:
+    container_name: 'mongodb'
+    image: "mongo"
+    volumes:
+      - data:/data/db
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: denis
+    #   MONGO_INITDB_ROOT_PASSWORD: secret
+    #   alternatively: - MONGO_INITDB_ROOT_PASSWORD=secret
+    env_file:
+      - ./env/mongo.env
+  frontend:
+    container_name: 'frontend'
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/app/src
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    # these 2 options keep the terminal open and executing (-it command option)
+    stdin_open: true
+    tty: true
+  backend:
+    container_name: 'backend'
+    # simplest form
+    build: ./backend
+    # used to specify the name of the Dockerfile if different from the default "Dockerfile" name. IE Dockerfile-prod
+    # the path specified here will also be where the image is created, so be aware that all declared paths in the Dockerfile will refer to this folder
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile 
+    #   args:
+    #     arg1: 1
+    ports:
+     - '80:80'
+    volumes:
+      - logs:/app/logs
+      - /app/node_modules
+      - ./backend:/app  
+    env_file:
+      - ./env/backend.env
+    # declares that the following containers need to be up for this container to work correctly
+    depends_on:
+      - mongodb
+
+
+# all named volumes must be declared globally as well
+volumes:
+  data:
+  logs:
