@@ -8,4 +8,4 @@ services:
       - ./:/app
 
 # run with "docker-compose exec mynpm init" if the container is already running
-# "docker-compose run mynpm init" if we're starting it now with commands to be run
+# "docker-compose run --rm mynpm init" if we're starting it now with commands to be run
