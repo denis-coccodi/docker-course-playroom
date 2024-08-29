@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  mynpm:
+    build: ./
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./:/app
+
+# run with "docker-compose exec mynpm init" if the container is already running
+# "docker-compose run mynpm init" if we're starting it now with commands to be run
